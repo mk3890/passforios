@@ -77,7 +77,7 @@ class PasswordsTableDataSource: NSObject, UITableViewDataSource {
         }
 
         for entry in passwordTableEntries {
-            if entry.matches(text) {
+            if entry.matches(host: text) {
                 suggestedPasswordsTableEntries.append(entry)
             } else {
                 otherPasswordsTableEntries.append(entry)
