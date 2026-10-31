@@ -206,6 +206,8 @@
 "Yes"       = "Ja";
 "No"        = "Nein";
 "TryAgain"  = "Nochmal versuchen";
+"TryAgainIn(%@)" = "Erneut versuchen in %@";
+"UnlockSavedPassphrase." = "Gespeicherte PGP-Schlüssel-Passphrase entsperren.";
 "Delete"    = "Löschen";
 "Back"      = "Zurück";
 "Current"   = "Momentan";

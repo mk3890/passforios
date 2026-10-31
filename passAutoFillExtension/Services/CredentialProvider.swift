@@ -56,7 +56,7 @@ class CredentialProvider {
         }
         DispatchQueue.global(qos: .userInteractive).async {
             let password = try? PasswordStore.shared.decrypt(path: recordIdentifier) { keyID in
-                AppKeychain.shared.get(for: AppKeychain.getPGPKeyPassphraseKey(keyID: keyID)) ?? ""
+                AppKeychain.shared.getWithoutUserInteraction(for: AppKeychain.getPGPKeyPassphraseKey(keyID: keyID)) ?? ""
             }
             DispatchQueue.main.async {
                 guard let password else {

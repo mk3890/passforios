@@ -179,6 +179,7 @@
 		672D70F9FE896D20E5819F60 /* AutoFillIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047D9CF533EE8718938FD767 /* AutoFillIdentity.swift */; };
 		A2699ACF24027D9500F36323 /* PasswordTableEntryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2699ACE24027D9500F36323 /* PasswordTableEntryTest.swift */; };
 		E8CAB27A4C2E66B9692656F9 /* AutoFillIdentityTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE32256A78938A4AB2B563E0 /* AutoFillIdentityTest.swift */; };
+		B1BB1AE7B565E314C5F57945 /* PasscodeLockTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA660F249D8B1AD49EE2B57B /* PasscodeLockTest.swift */; };
 		A2802BF91E70813A00879216 /* SliderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2802BF71E70813A00879216 /* SliderTableViewCell.swift */; };
 		A2802BFA1E70813A00879216 /* SliderTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A2802BF81E70813A00879216 /* SliderTableViewCell.xib */; };
 		A2A61C201EEFABAD00CFE063 /* UtilsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A61C1F1EEFABAD00CFE063 /* UtilsExtension.swift */; };
@@ -484,6 +485,7 @@
 		A2699ACE24027D9500F36323 /* PasswordTableEntryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordTableEntryTest.swift; sourceTree = "<group>"; };
 		047D9CF533EE8718938FD767 /* AutoFillIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFillIdentity.swift; sourceTree = "<group>"; };
 		CE32256A78938A4AB2B563E0 /* AutoFillIdentityTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFillIdentityTest.swift; sourceTree = "<group>"; };
+		CA660F249D8B1AD49EE2B57B /* PasscodeLockTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasscodeLockTest.swift; sourceTree = "<group>"; };
 		A2802BF71E70813A00879216 /* SliderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SliderTableViewCell.swift; sourceTree = "<group>"; };
 		A2802BF81E70813A00879216 /* SliderTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SliderTableViewCell.xib; sourceTree = "<group>"; };
 		A2A61C1F1EEFABAD00CFE063 /* UtilsExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilsExtension.swift; sourceTree = "<group>"; };
@@ -762,6 +764,7 @@
 			children = (
 				DC6474602D46A8F2004B4BBC /* GitRepositoryTest.swift */,
 				CE32256A78938A4AB2B563E0 /* AutoFillIdentityTest.swift */,
+				CA660F249D8B1AD49EE2B57B /* PasscodeLockTest.swift */,
 				30695E2424FAEF2600C9D46E /* GitCredentialTest.swift */,
 				9ADC954024418A5F0005402E /* PasswordStoreTest.swift */,
 				A2699ACE24027D9500F36323 /* PasswordTableEntryTest.swift */,
@@ -1687,6 +1690,7 @@
 				DC6474612D46A8F8004B4BBC /* GitRepositoryTest.swift in Sources */,
 				A2699ACF24027D9500F36323 /* PasswordTableEntryTest.swift in Sources */,
 				E8CAB27A4C2E66B9692656F9 /* AutoFillIdentityTest.swift in Sources */,
+				B1BB1AE7B565E314C5F57945 /* PasscodeLockTest.swift in Sources */,
 				30FD2F78214D9E0E005E0A92 /* ParserTest.swift in Sources */,
 				A2AA934622DE3A8000D79A00 /* PGPAgentTest.swift in Sources */,
 				8A4716692F5EF56900C7A64D /* AppKeychainTest.swift in Sources */,

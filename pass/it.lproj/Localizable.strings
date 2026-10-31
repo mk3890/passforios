@@ -202,6 +202,8 @@
 "Yes"       = "Si";
 "No"        = "No";
 "TryAgain"  = "Riprova";
+"TryAgainIn(%@)" = "Riprova tra %@";
+"UnlockSavedPassphrase." = "Sblocca la passphrase salvata della chiave PGP.";
 "Delete"    = "Elimina";
 "Back"      = "Indietro";
 "Current"   = "Attuale";

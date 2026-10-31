@@ -207,6 +207,8 @@
 "Yes"       = "Yes";
 "No"        = "No";
 "TryAgain"  = "Try Again";
+"TryAgainIn(%@)" = "Try again in %@";
+"UnlockSavedPassphrase." = "Unlock the saved PGP key passphrase.";
 "Delete"    = "Delete";
 "Back"      = "Back";
 "Current"   = "Current";

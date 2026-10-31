@@ -65,14 +65,14 @@ public enum Utils {
                     }
                 )
                 alert.addTextField { textField in
-                    textField.text = AppKeychain.shared.get(for: AppKeychain.getPGPKeyPassphraseKey(keyID: keyID)) ?? ""
+                    textField.text = AppKeychain.shared.getWithoutUserInteraction(for: AppKeychain.getPGPKeyPassphraseKey(keyID: keyID)) ?? ""
                     textField.isSecureTextEntry = true
                 }
                 controller.present(alert, animated: true)
             }
             _ = sem.wait(timeout: DispatchTime.distantFuture)
             if Defaults.isRememberPGPPassphraseOn {
-                AppKeychain.shared.add(string: passphrase, for: AppKeychain.getPGPKeyPassphraseKey(keyID: keyID))
+                AppKeychain.shared.addProtected(string: passphrase, for: AppKeychain.getPGPKeyPassphraseKey(keyID: keyID))
             }
             return passphrase
         }

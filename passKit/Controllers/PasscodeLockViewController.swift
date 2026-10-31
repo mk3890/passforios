@@ -22,6 +22,15 @@ open class PasscodeLockViewController: UIViewController, UITextFieldDelegate {
 
     var isCancellable = false
 
+    private var lockoutTimer: Timer?
+
+    private static let durationFormatter: DateComponentsFormatter = {
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .abbreviated
+        formatter.allowedUnits = [.minute, .second]
+        return formatter
+    }()
+
     private let passwordStore = PasswordStore.shared
 
     override open func loadView() {
@@ -33,7 +42,8 @@ open class PasscodeLockViewController: UIViewController, UITextFieldDelegate {
         passcodeTextField.isSecureTextEntry = true
         passcodeTextField.clearButtonMode = UITextField.ViewMode.whileEditing
         passcodeTextField.delegate = self
-        passcodeTextField.addTarget(self, action: #selector(passcodeTextFieldDidChange), for: UIControl.Event.editingChanged)
+        // Unlock on return only, so that every guess counts as an attempt.
+        passcodeTextField.returnKeyType = .done
         passcodeTextField.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(passcodeTextField)
         self.passcodeTextField = passcodeTextField
@@ -127,6 +137,11 @@ open class PasscodeLockViewController: UIViewController, UITextFieldDelegate {
         view.addGestureRecognizer(tap)
     }
 
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateLockout()
+    }
+
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if let biometryAuthButton {
@@ -135,6 +150,8 @@ open class PasscodeLockViewController: UIViewController, UITextFieldDelegate {
     }
 
     private func dismissPasscodeLock(completionHandler: (() -> Void)? = nil) {
+        lockoutTimer?.invalidate()
+
         // clean up the textfield
         DispatchQueue.main.async {
             self.passcodeTextField?.text = ""
@@ -168,7 +185,8 @@ open class PasscodeLockViewController: UIViewController, UITextFieldDelegate {
 
     @objc
     func bioButtonPressedAction(_: UIButton) {
-        let myContext = LAContext()
+        // Authenticating the session also unlocks the saved PGP key passphrases without asking again.
+        let myContext = AppKeychain.shared.sessionAuthenticationContext
         let myLocalizedReasonString = "AuthenticationNeeded.".localize()
         var authError: NSError?
         if myContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
@@ -176,6 +194,7 @@ open class PasscodeLockViewController: UIViewController, UITextFieldDelegate {
                 if success {
                     DispatchQueue.main.async {
                         // user authenticated successfully, take appropriate action
+                        PasscodeLock.shared.didAuthenticate()
                         self.passcodeLockDidSucceed()
                     }
                 }
@@ -217,21 +236,35 @@ open class PasscodeLockViewController: UIViewController, UITextFieldDelegate {
 
     override public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == passcodeTextField {
-            if !PasscodeLock.shared.check(passcode: textField.text ?? "") {
+            if PasscodeLock.shared.check(passcode: textField.text ?? "") {
+                passcodeLockDidSucceed()
+            } else {
                 passcodeTextField?.placeholder =
                     "TryAgain".localize()
                 passcodeTextField?.text = ""
                 passcodeTextField?.shake()
+                updateLockout()
             }
         }
         textField.resignFirstResponder()
         return true
     }
 
-    @objc
-    func passcodeTextFieldDidChange(_ textField: UITextField) {
-        if PasscodeLock.shared.check(passcode: textField.text ?? "") {
-            passcodeLockDidSucceed()
+    /// Disable the passcode field while attempts are delayed after too many failed ones.
+    private func updateLockout() {
+        lockoutTimer?.invalidate()
+        let remaining = PasscodeLock.shared.lockoutRemaining
+        guard remaining > 0 else {
+            if passcodeTextField?.isEnabled == false {
+                passcodeTextField?.isEnabled = true
+                passcodeTextField?.placeholder = "EnterPasscode".localize()
+            }
+            return
+        }
+        passcodeTextField?.isEnabled = false
+        passcodeTextField?.placeholder = "TryAgainIn(%@)".localize(Self.durationFormatter.string(from: remaining.rounded(.up)) ?? "")
+        lockoutTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { [weak self] _ in
+            self?.updateLockout()
         }
     }
 
