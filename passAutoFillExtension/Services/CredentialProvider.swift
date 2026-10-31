@@ -10,11 +10,17 @@ import AuthenticationServices
 import passKit
 
 class CredentialProvider {
+    enum CredentialType {
+        case password
+        case oneTimeCode
+    }
+
     private let viewController: UIViewController
     private let extensionContext: ASCredentialProviderExtensionContext
     private let afterDecryption: (Password) -> Void
 
     var identifier: ASCredentialServiceIdentifier?
+    var credentialType = CredentialType.password
 
     init(viewController: UIViewController, extensionContext: ASCredentialProviderExtensionContext, afterDecryption: @escaping (Password) -> Void) {
         self.viewController = viewController
@@ -22,23 +28,25 @@ class CredentialProvider {
         self.afterDecryption = afterDecryption
     }
 
-    func credentials(for identity: ASPasswordCredentialIdentity) {
-        guard let recordIdentifier = identity.recordIdentifier else {
+    func credentials(for recordIdentifier: String?) {
+        guard let recordIdentifier else {
             cancel(with: .credentialIdentityNotFound)
             return
         }
 
         decryptPassword(in: viewController, with: recordIdentifier) { password in
-            self.extensionContext.completeRequest(withSelectedCredential: .from(password))
-            self.afterDecryption(password)
+            guard self.complete(with: password) else {
+                self.alertMissingOneTimeCode()
+                return
+            }
+            self.saveOneTimeCodeIdentity(for: password, at: recordIdentifier)
         }
     }
 
     /// Decrypt without showing any UI. Whenever that is not possible, e.g., because the PGP key
     /// passphrase is not saved, let iOS fall back to `prepareInterfaceToProvideCredential`.
-    func credentialsWithoutUserInteraction(for identity: ASPasswordCredentialIdentity) {
-        guard let recordIdentifier = identity.recordIdentifier,
-              PasswordStore.shared.fetchPasswordEntity(with: recordIdentifier) != nil else {
+    func credentialsWithoutUserInteraction(for recordIdentifier: String?) {
+        guard let recordIdentifier, PasswordStore.shared.fetchPasswordEntity(with: recordIdentifier) != nil else {
             cancel(with: .credentialIdentityNotFound)
             return
         }
@@ -55,43 +63,70 @@ class CredentialProvider {
                     self.cancel(with: .userInteractionRequired)
                     return
                 }
-                self.extensionContext.completeRequest(withSelectedCredential: .from(password))
-                self.afterDecryption(password)
+                guard self.complete(with: password) else {
+                    self.cancel(with: .credentialIdentityNotFound)
+                    return
+                }
+                self.saveOneTimeCodeIdentity(for: password, at: recordIdentifier)
             }
         }
     }
 
     func persistAndProvideCredentials(with passwordPath: String) {
         decryptPassword(in: viewController, with: passwordPath) { password in
-            if let identifier = self.identifier {
-                PasswordStore.shared.saveCredentialIdentity(ASPasswordCredentialIdentity(
+            guard self.complete(with: password) else {
+                self.alertMissingOneTimeCode()
+                return
+            }
+            if let identifier = self.identifier, self.credentialType == .password {
+                PasswordStore.shared.saveCredentialIdentity(AutoFillIdentity(
+                    kind: .password,
                     serviceIdentifier: identifier,
                     user: password.getUsernameForCompletion(),
                     recordIdentifier: passwordPath
                 ))
             }
-            self.extensionContext.completeRequest(withSelectedCredential: .from(password))
-            self.afterDecryption(password)
+            self.saveOneTimeCodeIdentity(for: password, at: passwordPath)
         }
+    }
+
+    /// Complete the request with the password or its one-time code, depending on what was asked for.
+    /// Returns false if a one-time code was asked for, but the password has none.
+    private func complete(with password: Password) -> Bool {
+        switch credentialType {
+        case .password:
+            extensionContext.completeRequest(withSelectedCredential: .from(password))
+            afterDecryption(password)
+            return true
+        case .oneTimeCode:
+            // Counter based codes are not supported, since filling one would have to update the password file.
+            guard #available(iOS 18.0, *), password.otpType == .totp, let code = password.currentOtp else {
+                return false
+            }
+            extensionContext.completeOneTimeCodeRequest(using: ASOneTimeCodeCredential(code: code))
+            return true
+        }
+    }
+
+    /// Suggest the one-time code of a password with TOTP whenever it is used for a website or app.
+    private func saveOneTimeCodeIdentity(for password: Password, at passwordPath: String) {
+        guard let identifier, password.otpType == .totp else {
+            return
+        }
+        PasswordStore.shared.saveCredentialIdentity(AutoFillIdentity(
+            kind: .oneTimeCode,
+            serviceIdentifier: identifier,
+            user: password.name,
+            recordIdentifier: passwordPath
+        ))
+    }
+
+    private func alertMissingOneTimeCode() {
+        Utils.alert(title: "CannotFillOneTimeCode".localize(), message: "NoOneTimeCode.".localize(), controller: viewController)
     }
 
     private func cancel(with code: ASExtensionError.Code) {
         extensionContext.cancelRequest(withError: NSError(domain: ASExtensionErrorDomain, code: code.rawValue))
-    }
-}
-
-extension ASCredentialServiceIdentifier {
-    /// The host of the website or app asking for credentials. Depending on the caller, iOS passes
-    /// either a bare domain like `github.com` or a URL, which may lack a scheme.
-    var host: String? {
-        switch type {
-        case .domain:
-            return identifier
-        case .URL:
-            return URL(string: identifier)?.host ?? URL(string: "https://\(identifier)")?.host
-        @unknown default:
-            return nil
-        }
     }
 }
 

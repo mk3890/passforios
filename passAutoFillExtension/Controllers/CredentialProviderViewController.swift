@@ -35,35 +35,74 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
     }
 
     override func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
+        prepareCredentialList(for: serviceIdentifiers, type: .password)
+    }
+
+    @available(iOS 18.0, *)
+    override func prepareOneTimeCodeCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
+        prepareCredentialList(for: serviceIdentifiers, type: .oneTimeCode)
+    }
+
+    override func provideCredentialWithoutUserInteraction(for credentialIdentity: ASPasswordCredentialIdentity) {
+        provideCredentialWithoutUserInteraction(for: credentialIdentity.recordIdentifier, type: .password)
+    }
+
+    @available(iOS 17.0, *)
+    override func provideCredentialWithoutUserInteraction(for credentialRequest: any ASCredentialRequest) {
+        guard let type = Self.credentialType(of: credentialRequest) else {
+            cancelRequest(with: .credentialIdentityNotFound)
+            return
+        }
+        provideCredentialWithoutUserInteraction(for: credentialRequest.credentialIdentity.recordIdentifier, type: type)
+    }
+
+    override func prepareInterfaceToProvideCredential(for credentialIdentity: ASPasswordCredentialIdentity) {
+        prepareInterfaceToProvideCredential(for: credentialIdentity.serviceIdentifier, recordIdentifier: credentialIdentity.recordIdentifier, type: .password)
+    }
+
+    @available(iOS 17.0, *)
+    override func prepareInterfaceToProvideCredential(for credentialRequest: any ASCredentialRequest) {
+        guard let type = Self.credentialType(of: credentialRequest) else {
+            cancelRequest(with: .credentialIdentityNotFound)
+            return
+        }
+        let identity = credentialRequest.credentialIdentity
+        prepareInterfaceToProvideCredential(for: identity.serviceIdentifier, recordIdentifier: identity.recordIdentifier, type: type)
+    }
+
+    private func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier], type: CredentialProvider.CredentialType) {
         passcodelock.presentPasscodeLockIfNeeded(self) {
             self.view.isHidden = true
         } after: { [unowned self] in
             view.isHidden = false
+            credentialProvider.credentialType = type
             showPasswordsWithSuggestion(for: serviceIdentifiers)
         }
     }
 
-    override func provideCredentialWithoutUserInteraction(for credentialIdentity: ASPasswordCredentialIdentity) {
-        credentialProvider.identifier = credentialIdentity.serviceIdentifier
-        if !PasscodeLock.shared.hasPasscode, Defaults.isRememberPGPPassphraseOn {
-            credentialProvider.credentialsWithoutUserInteraction(for: credentialIdentity)
-        } else {
-            extensionContext.cancelRequest(withError: NSError(domain: ASExtensionErrorDomain, code: ASExtensionError.userInteractionRequired.rawValue))
+    private func provideCredentialWithoutUserInteraction(for recordIdentifier: String?, type: CredentialProvider.CredentialType) {
+        guard !PasscodeLock.shared.hasPasscode, Defaults.isRememberPGPPassphraseOn else {
+            cancelRequest(with: .userInteractionRequired)
+            return
         }
+        credentialProvider.credentialType = type
+        credentialProvider.credentialsWithoutUserInteraction(for: recordIdentifier)
     }
 
-    override func prepareInterfaceToProvideCredential(for credentialIdentity: ASPasswordCredentialIdentity) {
+    private func prepareInterfaceToProvideCredential(for serviceIdentifier: ASCredentialServiceIdentifier, recordIdentifier: String?, type: CredentialProvider.CredentialType) {
         passcodelock.presentPasscodeLockIfNeeded(self) {
             self.view.isHidden = true
         } after: { [unowned self] in
             // Keep the list visible, so that it is possible to pick another password or cancel
             // if decryption fails.
             view.isHidden = false
+            credentialProvider.credentialType = type
             // The password may have been renamed or deleted since the suggestion was saved.
-            if let path = credentialIdentity.recordIdentifier, PasswordStore.shared.fetchPasswordEntity(with: path) != nil {
-                credentialProvider.credentials(for: credentialIdentity)
+            if let recordIdentifier, PasswordStore.shared.fetchPasswordEntity(with: recordIdentifier) != nil {
+                credentialProvider.identifier = serviceIdentifier
+                credentialProvider.credentials(for: recordIdentifier)
             } else {
-                showPasswordsWithSuggestion(for: [credentialIdentity.serviceIdentifier])
+                showPasswordsWithSuggestion(for: [serviceIdentifier])
             }
         }
     }
@@ -73,6 +112,21 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
         credentialProvider.identifier = identifier
         passwordsViewController.navigationItem.prompt = identifier?.host
         passwordsViewController.showPasswordsWithSuggestion(matching: identifier?.host ?? "")
+    }
+
+    @available(iOS 17.0, *)
+    private static func credentialType(of credentialRequest: any ASCredentialRequest) -> CredentialProvider.CredentialType? {
+        if credentialRequest.credentialIdentity is ASPasswordCredentialIdentity {
+            return .password
+        }
+        if #available(iOS 18.0, *), credentialRequest.credentialIdentity is ASOneTimeCodeCredentialIdentity {
+            return .oneTimeCode
+        }
+        return nil
+    }
+
+    private func cancelRequest(with code: ASExtensionError.Code) {
+        extensionContext.cancelRequest(withError: NSError(domain: ASExtensionErrorDomain, code: code.rawValue))
     }
 
     @objc

@@ -176,7 +176,9 @@
 		A267002A1EEC466A00176B8A /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A26700281EEC466A00176B8A /* MainInterface.storyboard */; };
 		A26700371EEC475600176B8A /* passProcessor.js in Resources */ = {isa = PBXBuildFile; fileRef = A26700351EEC475600176B8A /* passProcessor.js */; };
 		A2699ACD2402631400F36323 /* PasswordTableEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2699ACC2402631400F36323 /* PasswordTableEntry.swift */; };
+		672D70F9FE896D20E5819F60 /* AutoFillIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047D9CF533EE8718938FD767 /* AutoFillIdentity.swift */; };
 		A2699ACF24027D9500F36323 /* PasswordTableEntryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2699ACE24027D9500F36323 /* PasswordTableEntryTest.swift */; };
+		E8CAB27A4C2E66B9692656F9 /* AutoFillIdentityTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE32256A78938A4AB2B563E0 /* AutoFillIdentityTest.swift */; };
 		A2802BF91E70813A00879216 /* SliderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2802BF71E70813A00879216 /* SliderTableViewCell.swift */; };
 		A2802BFA1E70813A00879216 /* SliderTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A2802BF81E70813A00879216 /* SliderTableViewCell.xib */; };
 		A2A61C201EEFABAD00CFE063 /* UtilsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A61C1F1EEFABAD00CFE063 /* UtilsExtension.swift */; };
@@ -480,6 +482,8 @@
 		A26700351EEC475600176B8A /* passProcessor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = passProcessor.js; sourceTree = "<group>"; };
 		A2699ACC2402631400F36323 /* PasswordTableEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordTableEntry.swift; sourceTree = "<group>"; };
 		A2699ACE24027D9500F36323 /* PasswordTableEntryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordTableEntryTest.swift; sourceTree = "<group>"; };
+		047D9CF533EE8718938FD767 /* AutoFillIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFillIdentity.swift; sourceTree = "<group>"; };
+		CE32256A78938A4AB2B563E0 /* AutoFillIdentityTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFillIdentityTest.swift; sourceTree = "<group>"; };
 		A2802BF71E70813A00879216 /* SliderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SliderTableViewCell.swift; sourceTree = "<group>"; };
 		A2802BF81E70813A00879216 /* SliderTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SliderTableViewCell.xib; sourceTree = "<group>"; };
 		A2A61C1F1EEFABAD00CFE063 /* UtilsExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilsExtension.swift; sourceTree = "<group>"; };
@@ -757,6 +761,7 @@
 			isa = PBXGroup;
 			children = (
 				DC6474602D46A8F2004B4BBC /* GitRepositoryTest.swift */,
+				CE32256A78938A4AB2B563E0 /* AutoFillIdentityTest.swift */,
 				30695E2424FAEF2600C9D46E /* GitCredentialTest.swift */,
 				9ADC954024418A5F0005402E /* PasswordStoreTest.swift */,
 				A2699ACE24027D9500F36323 /* PasswordTableEntryTest.swift */,
@@ -956,6 +961,7 @@
 			isa = PBXGroup;
 			children = (
 				DC64745E2D45B23A004B4BBC /* GitRepository.swift */,
+				047D9CF533EE8718938FD767 /* AutoFillIdentity.swift */,
 				30697C4121F63CAB0064FCAC /* GitCredential.swift */,
 				30697C4221F63CAB0064FCAC /* PasscodeLock.swift */,
 				30697C4021F63CAB0064FCAC /* Password.swift */,
@@ -1650,6 +1656,7 @@
 				9A74D2E0277D2F8C00F7BC44 /* UIAlertControllerExtension.swift in Sources */,
 				30697C4721F63CAB0064FCAC /* PasscodeLock.swift in Sources */,
 				A2699ACD2402631400F36323 /* PasswordTableEntry.swift in Sources */,
+				672D70F9FE896D20E5819F60 /* AutoFillIdentity.swift in Sources */,
 				30697C3421F63C8B0064FCAC /* PasscodeLockViewController.swift in Sources */,
 				3087574F2343E42A00B971A2 /* Colors.swift in Sources */,
 				30697C2C21F63C5A0064FCAC /* FileManagerExtension.swift in Sources */,
@@ -1679,6 +1686,7 @@
 				30BAC8CB22E3BB6C00438475 /* DictBasedKeychain.swift in Sources */,
 				DC6474612D46A8F8004B4BBC /* GitRepositoryTest.swift in Sources */,
 				A2699ACF24027D9500F36323 /* PasswordTableEntryTest.swift in Sources */,
+				E8CAB27A4C2E66B9692656F9 /* AutoFillIdentityTest.swift in Sources */,
 				30FD2F78214D9E0E005E0A92 /* ParserTest.swift in Sources */,
 				A2AA934622DE3A8000D79A00 /* PGPAgentTest.swift in Sources */,
 				8A4716692F5EF56900C7A64D /* AppKeychainTest.swift in Sources */,

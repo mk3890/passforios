@@ -6,7 +6,6 @@
 //  Copyright © 2017 Bob Sun. All rights reserved.
 //
 
-import AuthenticationServices
 import CoreData
 import Foundation
 import KeychainAccess
@@ -467,92 +466,6 @@ extension PasswordStore {
             throw AppError.repositoryNotSet
         }
         return try gitRepository.commit(signature: gitSignatureForNow, message: message)
-    }
-}
-
-/// A credential identity picked by hand in the AutoFill extension, kept so that it survives
-/// rebuilding the QuickType suggestions after a sync.
-public struct SavedCredentialIdentity: Codable, Equatable, DefaultsSerializable {
-    public let serviceIdentifier: String
-    public let isURL: Bool
-    public let user: String
-    public let recordIdentifier: String
-
-    public init(_ identity: ASPasswordCredentialIdentity) {
-        self.serviceIdentifier = identity.serviceIdentifier.identifier
-        self.isURL = identity.serviceIdentifier.type == .URL
-        self.user = identity.user
-        self.recordIdentifier = identity.recordIdentifier ?? ""
-    }
-
-    var credentialIdentity: ASPasswordCredentialIdentity {
-        ASPasswordCredentialIdentity(
-            serviceIdentifier: ASCredentialServiceIdentifier(identifier: serviceIdentifier, type: isURL ? .URL : .domain),
-            user: user,
-            recordIdentifier: recordIdentifier
-        )
-    }
-}
-
-public extension PasswordStore {
-    /// Replace the QuickType suggestions with one identity per password whose path contains a
-    /// domain, e.g., `github.com/user`, plus the identities picked by hand that still exist.
-    func updateCredentialIdentities() {
-        let passwords = fetchPasswordEntityCoreData(withDir: false)
-        let paths = Set(passwords.map(\.path))
-        let derived = passwords.compactMap { Self.credentialIdentity(for: $0) }
-        let saved = Defaults.savedCredentialIdentities.filter { paths.contains($0.recordIdentifier) }
-        Defaults.savedCredentialIdentities = saved
-        let identities = derived + saved.map(\.credentialIdentity)
-
-        ASCredentialIdentityStore.shared.getState { state in
-            guard state.isEnabled else {
-                return
-            }
-            ASCredentialIdentityStore.shared.replaceCredentialIdentities(with: identities)
-        }
-    }
-
-    /// Remember an identity picked by hand and add it to the QuickType suggestions.
-    func saveCredentialIdentity(_ identity: ASPasswordCredentialIdentity) {
-        let saved = SavedCredentialIdentity(identity)
-        Defaults.savedCredentialIdentities.removeAll {
-            $0.serviceIdentifier == saved.serviceIdentifier && $0.recordIdentifier == saved.recordIdentifier
-        }
-        Defaults.savedCredentialIdentities.append(saved)
-
-        ASCredentialIdentityStore.shared.getState { state in
-            guard state.isEnabled else {
-                return
-            }
-            ASCredentialIdentityStore.shared.saveCredentialIdentities([identity])
-        }
-    }
-
-    private static func credentialIdentity(for password: PasswordEntity) -> ASPasswordCredentialIdentity? {
-        let components = password.nameWithDir.split(separator: "/").map(String.init)
-        // Prefer the innermost domain, e.g., "work.example.com" in "example.com/work.example.com/me".
-        guard let index = components.lastIndex(where: { domain(in: $0) != nil }), let host = domain(in: components[index]) else {
-            return nil
-        }
-        let user = components[(index + 1)...].joined(separator: "/")
-        return ASPasswordCredentialIdentity(
-            serviceIdentifier: ASCredentialServiceIdentifier(identifier: host, type: .domain),
-            user: user.isEmpty ? host : user,
-            recordIdentifier: password.path
-        )
-    }
-
-    private static func domain(in component: String) -> String? {
-        let host = component.lowercased()
-        let labels = host.split(separator: ".", omittingEmptySubsequences: false)
-        guard labels.count >= 2, let tld = labels.last, tld.count >= 2, tld.allSatisfy(\.isLetter) else {
-            return nil
-        }
-        guard labels.allSatisfy({ !$0.isEmpty && $0.allSatisfy { $0.isLetter || $0.isNumber || $0 == "-" } }) else {
-            return nil
-        }
-        return host
     }
 }
 

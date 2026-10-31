@@ -71,5 +71,5 @@ public extension DefaultsKeys {
 
     var autoCopyOTP: DefaultsKey<Bool> { DefaultsKey("autoCopyOTP", defaultValue: false) }
 
-    var savedCredentialIdentities: DefaultsKey<[SavedCredentialIdentity]> { DefaultsKey("savedCredentialIdentities", defaultValue: []) }
+    var savedAutoFillIdentities: DefaultsKey<[AutoFillIdentity]> { DefaultsKey("savedAutoFillIdentities", defaultValue: []) }
 }

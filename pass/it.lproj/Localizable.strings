@@ -36,6 +36,8 @@
 "UnderlyingError"                                   = "Errore di base: %@";
 "ErrorSaving"                                       = "Errore nel salvataggio: %@";
 "CannotCopyPassword"                                = "Impossibile copiare la password";
+"CannotFillOneTimeCode"                             = "Impossibile inserire il codice monouso";
+"NoOneTimeCode."                                    = "Questa password non contiene una password monouso basata sul tempo.";
 "CannotAddPassword"                                 = "Impossibile aggiungere la password";
 "WrongPassphrase"                                   = "Password errata";
 "MakeSurePgpAndGitProperlySet."                     = "Assicurarsi che la chiave PGP e il server Git siano configurati correttamente.";

@@ -36,6 +36,8 @@
 "UnderlyingError"                                   = "Zugrundeliegender Fehler: %@";
 "ErrorSaving"                                       = "Fehler beim Speichern: %@";
 "CannotCopyPassword"                                = "Passwort kann nicht kopiert werden";
+"CannotFillOneTimeCode"                             = "Einmalcode kann nicht ausgefüllt werden";
+"NoOneTimeCode."                                    = "Dieses Passwort enthält kein zeitbasiertes Einmalpasswort.";
 "CannotAddPassword"                                 = "Passwort kann nicht hinzugefügt werden";
 "WrongPassphrase"                                   = "Falsches Passwort";
 "MakeSurePgpAndGitProperlySet."                     = "Stelle bitte sicher, dass die Einstellungen für GPG-Schlüssel und Git-Server richtig sind.";

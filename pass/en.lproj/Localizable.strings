@@ -37,6 +37,8 @@
 "MergeConflictError"                                = "Conflict files: %@";
 "ErrorSaving"                                       = "Error saving: %@";
 "CannotCopyPassword"                                = "Cannot copy password";
+"CannotFillOneTimeCode"                             = "Cannot fill one-time code";
+"NoOneTimeCode."                                    = "This password has no time-based one-time password.";
 "CannotAddPassword"                                 = "Cannot add password";
 "WrongPassphrase"                                   = "Wrong passphrase";
 "MakeSurePgpAndGitProperlySet."                     = "Please make sure PGP key and Git server are properly set.";
