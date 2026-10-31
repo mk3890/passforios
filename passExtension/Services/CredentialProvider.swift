@@ -39,7 +39,7 @@ class CredentialProvider {
 
     func provideCredentialsBrowser(with passwordPath: String) {
         decryptPassword(in: viewController, with: passwordPath) { password in
-            Utils.copyToPasteboard(textToCopy: password.password)
+            Utils.copyToPasteboard(textToCopy: password.password, expirationTime: Globals.pasteboardExpirationTime)
             // return a dictionary for JavaScript for best-effor fill in
             let extensionItem = NSExtensionItem()
             let returnDictionary = [

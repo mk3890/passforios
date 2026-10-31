@@ -12,7 +12,7 @@ public class NotificationCenterDispatcher: NSObject, UNUserNotificationCenterDel
     public func userNotificationCenter(_: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         if response.actionIdentifier == Globals.otpNotificationCopyAction {
             if let otp = response.notification.request.content.userInfo["otp"] as? String {
-                UIPasteboard.general.string = otp
+                Utils.copyToPasteboard(textToCopy: otp, expirationTime: Globals.pasteboardExpirationTime)
             }
         }
         completionHandler()
@@ -31,7 +31,7 @@ public class NotificationCenterDispatcher: NSObject, UNUserNotificationCenterDel
             content.title = "OTPForPassword".localize(password.name)
             if Defaults.autoCopyOTP {
                 content.body = "OTPHasBeenCopied".localize()
-                UIPasteboard.general.string = otp
+                Utils.copyToPasteboard(textToCopy: otp, expirationTime: Globals.pasteboardExpirationTime)
             } else {
                 content.body = otp
                 content.categoryIdentifier = Globals.otpNotificationCategory

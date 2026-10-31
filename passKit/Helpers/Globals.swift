@@ -49,6 +49,8 @@ public final class Globals {
     public static let passwordFont = UIFont(name: "Courier-Bold", size: UIFont.labelFontSize - 1)
 
     public static let otpNotification = bundleIdentifier + ".notification.otp"
+    /// Time in seconds after which secrets copied to the pasteboard are removed.
+    public static let pasteboardExpirationTime: TimeInterval = 45
     public static let otpNotificationCategory = bundleIdentifier + ".notification.otp.category"
     public static let otpNotificationCopyAction = bundleIdentifier + ".notification.otp.action.copy"
 

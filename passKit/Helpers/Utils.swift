@@ -7,11 +7,18 @@
 //
 
 public enum Utils {
-    public static func copyToPasteboard(textToCopy: String?) {
-        guard textToCopy != nil else {
+    /// Copy text to the pasteboard of this device only, i.e., keep it out of Universal Clipboard. With a positive
+    /// expiration time, iOS removes the text afterwards, even if the app has been suspended or terminated, and
+    /// leaves anything copied in the meantime alone.
+    public static func copyToPasteboard(textToCopy: String?, expirationTime: TimeInterval = 0) {
+        guard let textToCopy else {
             return
         }
-        UIPasteboard.general.string = textToCopy
+        var options: [UIPasteboard.OptionsKey: Any] = [.localOnly: true]
+        if expirationTime > 0 {
+            options[.expirationDate] = Date(timeIntervalSinceNow: expirationTime)
+        }
+        UIPasteboard.general.setItems([["public.utf8-plain-text": textToCopy]], options: options)
     }
 
     public static func attributedPassword(plainPassword: String) -> NSAttributedString {
