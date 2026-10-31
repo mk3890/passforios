@@ -21,18 +21,10 @@ class CredentialProvider {
         self.afterDecryption = afterDecryption
     }
 
-    func provideCredentialsFindLogin(with passwordPath: String) {
+    func copyPassword(with passwordPath: String) {
         decryptPassword(in: viewController, with: passwordPath) { password in
-            let extensionItem = NSExtensionItem()
-            var returnDictionary = [
-                PassExtensionKey.usernameKey: password.getUsernameForCompletion(),
-                PassExtensionKey.passwordKey: password.password,
-            ]
-            if let totpPassword = password.currentOtp {
-                returnDictionary[PassExtensionKey.totpKey] = totpPassword
-            }
-            extensionItem.attachments = [NSItemProvider(item: returnDictionary as NSSecureCoding, typeIdentifier: String(kUTTypePropertyList))]
-            self.extensionContext.completeRequest(returningItems: [extensionItem])
+            Utils.copyToPasteboard(textToCopy: password.password, expirationTime: Globals.pasteboardExpirationTime)
+            self.extensionContext.completeRequest(returningItems: nil)
             self.afterDecryption(password)
         }
     }

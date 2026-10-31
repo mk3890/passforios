@@ -25,7 +25,7 @@ class ExtensionViewController: UIViewController {
         .map(PasswordTableEntry.init)
 
     enum Action {
-        case findLogin, fillBrowser, unknown
+        case copyPassword, fillBrowser, unknown
     }
 
     private var action = Action.unknown
@@ -69,10 +69,8 @@ class ExtensionViewController: UIViewController {
         DispatchQueue.global(qos: .userInitiated).async {
             for attachment in attachments {
                 if attachment.hasURL {
-                    self.action = .fillBrowser
-                    attachment.extractSearchText { completeTask($0) }
-                } else if attachment.hasFindLoginAction {
-                    self.action = .findLogin
+                    // Any app can share a URL, so the password must not be returned to it.
+                    self.action = .copyPassword
                     attachment.extractSearchText { completeTask($0) }
                 } else if attachment.hasPropertyList {
                     self.action = .fillBrowser
@@ -88,8 +86,8 @@ class ExtensionViewController: UIViewController {
 extension ExtensionViewController: PasswordSelectionDelegate {
     func selected(password: PasswordTableEntry) {
         switch action {
-        case .findLogin:
-            credentialProvider.provideCredentialsFindLogin(with: password.passwordEntity.path)
+        case .copyPassword:
+            credentialProvider.copyPassword(with: password.passwordEntity.path)
         case .fillBrowser:
             credentialProvider.provideCredentialsBrowser(with: password.passwordEntity.path)
         default:
@@ -117,10 +115,6 @@ extension NSDictionary {
 }
 
 extension NSItemProvider {
-    var hasFindLoginAction: Bool {
-        hasItemConformingToTypeIdentifier(PassExtensionActions.findLogin)
-    }
-
     var hasURL: Bool {
         hasItemConformingToTypeIdentifier(kUTTypeURL as String) && registeredTypeIdentifiers.count == 1
     }
@@ -156,13 +150,6 @@ extension NSItemProvider {
                 if let result = dict[NSExtensionJavaScriptPreprocessingResultsKey] as? NSDictionary {
                     completion(result.extractSearchText())
                 }
-            }
-        }
-
-        loadItem(forTypeIdentifier: PassExtensionActions.findLogin) { item, _ in
-            if let dict = item as? NSDictionary {
-                let text = dict.extractSearchText()
-                completion(text)
             }
         }
     }
