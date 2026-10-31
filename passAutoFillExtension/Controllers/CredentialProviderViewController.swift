@@ -39,19 +39,14 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
             self.view.isHidden = true
         } after: { [unowned self] in
             view.isHidden = false
-            credentialProvider.identifier = serviceIdentifiers.first
-            let url = serviceIdentifiers.first
-                .map(\.identifier)
-                .flatMap(URL.init)
-            passwordsViewController.navigationItem.prompt = url?.host
-            passwordsViewController.showPasswordsWithSuggestion(matching: url?.host ?? "")
+            showPasswordsWithSuggestion(for: serviceIdentifiers)
         }
     }
 
     override func provideCredentialWithoutUserInteraction(for credentialIdentity: ASPasswordCredentialIdentity) {
         credentialProvider.identifier = credentialIdentity.serviceIdentifier
         if !PasscodeLock.shared.hasPasscode, Defaults.isRememberPGPPassphraseOn {
-            credentialProvider.credentials(for: credentialIdentity)
+            credentialProvider.credentialsWithoutUserInteraction(for: credentialIdentity)
         } else {
             extensionContext.cancelRequest(withError: NSError(domain: ASExtensionErrorDomain, code: ASExtensionError.userInteractionRequired.rawValue))
         }
@@ -61,8 +56,23 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
         passcodelock.presentPasscodeLockIfNeeded(self) {
             self.view.isHidden = true
         } after: { [unowned self] in
-            credentialProvider.credentials(for: credentialIdentity)
+            // Keep the list visible, so that it is possible to pick another password or cancel
+            // if decryption fails.
+            view.isHidden = false
+            // The password may have been renamed or deleted since the suggestion was saved.
+            if let path = credentialIdentity.recordIdentifier, PasswordStore.shared.fetchPasswordEntity(with: path) != nil {
+                credentialProvider.credentials(for: credentialIdentity)
+            } else {
+                showPasswordsWithSuggestion(for: [credentialIdentity.serviceIdentifier])
+            }
         }
+    }
+
+    private func showPasswordsWithSuggestion(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
+        let identifier = serviceIdentifiers.first { $0.host != nil } ?? serviceIdentifiers.first
+        credentialProvider.identifier = identifier
+        passwordsViewController.navigationItem.prompt = identifier?.host
+        passwordsViewController.showPasswordsWithSuggestion(matching: identifier?.host ?? "")
     }
 
     @objc

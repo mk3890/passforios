@@ -32,7 +32,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         UNUserNotificationCenter.current().delegate = NotificationCenterDispatcher.shared
+        NotificationCenter.default.addObserver(self, selector: #selector(updateCredentialIdentities), name: .passwordStoreUpdated, object: nil)
+        updateCredentialIdentities()
         return true
+    }
+
+    @objc
+    func updateCredentialIdentities() {
+        PasswordStore.shared.updateCredentialIdentities()
     }
 
     func application(_: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {

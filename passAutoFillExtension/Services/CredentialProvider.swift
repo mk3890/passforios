@@ -24,6 +24,7 @@ class CredentialProvider {
 
     func credentials(for identity: ASPasswordCredentialIdentity) {
         guard let recordIdentifier = identity.recordIdentifier else {
+            cancel(with: .credentialIdentityNotFound)
             return
         }
 
@@ -33,23 +34,63 @@ class CredentialProvider {
         }
     }
 
+    /// Decrypt without showing any UI. Whenever that is not possible, e.g., because the PGP key
+    /// passphrase is not saved, let iOS fall back to `prepareInterfaceToProvideCredential`.
+    func credentialsWithoutUserInteraction(for identity: ASPasswordCredentialIdentity) {
+        guard let recordIdentifier = identity.recordIdentifier,
+              PasswordStore.shared.fetchPasswordEntity(with: recordIdentifier) != nil else {
+            cancel(with: .credentialIdentityNotFound)
+            return
+        }
+        guard !Defaults.isYubiKeyEnabled else {
+            cancel(with: .userInteractionRequired)
+            return
+        }
+        DispatchQueue.global(qos: .userInteractive).async {
+            let password = try? PasswordStore.shared.decrypt(path: recordIdentifier) { keyID in
+                AppKeychain.shared.get(for: AppKeychain.getPGPKeyPassphraseKey(keyID: keyID)) ?? ""
+            }
+            DispatchQueue.main.async {
+                guard let password else {
+                    self.cancel(with: .userInteractionRequired)
+                    return
+                }
+                self.extensionContext.completeRequest(withSelectedCredential: .from(password))
+                self.afterDecryption(password)
+            }
+        }
+    }
+
     func persistAndProvideCredentials(with passwordPath: String) {
         decryptPassword(in: viewController, with: passwordPath) { password in
             if let identifier = self.identifier {
-                ASCredentialIdentityStore.shared.getState { state in
-                    guard state.isEnabled else {
-                        return
-                    }
-                    let credentialIdentity = ASPasswordCredentialIdentity(
-                        serviceIdentifier: identifier,
-                        user: password.getUsernameForCompletion(),
-                        recordIdentifier: passwordPath
-                    )
-                    ASCredentialIdentityStore.shared.saveCredentialIdentities([credentialIdentity])
-                }
+                PasswordStore.shared.saveCredentialIdentity(ASPasswordCredentialIdentity(
+                    serviceIdentifier: identifier,
+                    user: password.getUsernameForCompletion(),
+                    recordIdentifier: passwordPath
+                ))
             }
             self.extensionContext.completeRequest(withSelectedCredential: .from(password))
             self.afterDecryption(password)
+        }
+    }
+
+    private func cancel(with code: ASExtensionError.Code) {
+        extensionContext.cancelRequest(withError: NSError(domain: ASExtensionErrorDomain, code: code.rawValue))
+    }
+}
+
+extension ASCredentialServiceIdentifier {
+    /// The host of the website or app asking for credentials. Depending on the caller, iOS passes
+    /// either a bare domain like `github.com` or a URL, which may lack a scheme.
+    var host: String? {
+        switch type {
+        case .domain:
+            return identifier
+        case .URL:
+            return URL(string: identifier)?.host ?? URL(string: "https://\(identifier)")?.host
+        @unknown default:
+            return nil
         }
     }
 }

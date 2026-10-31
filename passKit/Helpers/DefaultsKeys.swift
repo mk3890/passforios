@@ -70,4 +70,6 @@ public extension DefaultsKeys {
     var encryptInArmored: DefaultsKey<Bool> { DefaultsKey("encryptInArmored", defaultValue: false) }
 
     var autoCopyOTP: DefaultsKey<Bool> { DefaultsKey("autoCopyOTP", defaultValue: false) }
+
+    var savedCredentialIdentities: DefaultsKey<[SavedCredentialIdentity]> { DefaultsKey("savedCredentialIdentities", defaultValue: []) }
 }
