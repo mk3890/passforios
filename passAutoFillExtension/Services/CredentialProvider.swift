@@ -90,6 +90,36 @@ class CredentialProvider {
         }
     }
 
+    /// Save a new password under the given name, or replace the password of the entry with that name, keeping its
+    /// other lines. The change is committed to the repository and pushed with the next sync.
+    func save(_ entry: NewPasswordEntry, as name: String, for serviceIdentifier: ASCredentialServiceIdentifier, completion: @escaping () -> Void) {
+        guard let path = NewPasswordEntry.path(forName: name) else {
+            Utils.alert(title: "CannotSave".localize(), message: "PasswordNameInvalid.".localize(), controller: viewController)
+            return
+        }
+        let identity = AutoFillIdentity(passwordPath: path)
+            ?? AutoFillIdentity(kind: .password, serviceIdentifier: serviceIdentifier, user: entry.username, recordIdentifier: path)
+        let store = { (body: () throws -> Void) in
+            do {
+                try body()
+                PasswordStore.shared.saveCredentialIdentity(identity)
+                completion()
+            } catch {
+                Utils.alert(title: "CannotSave".localize(), message: error.localizedDescription, controller: self.viewController)
+            }
+        }
+        guard let existingEntity = PasswordStore.shared.fetchPasswordEntity(with: path) else {
+            let password = Password(name: (name.trimmed as NSString).lastPathComponent, path: path, plainText: entry.plainText)
+            store { _ = try PasswordStore.shared.add(password: password) }
+            return
+        }
+        // Decrypting asks for the PGP key passphrase or Face ID, if necessary.
+        decryptPassword(in: viewController, with: path) { password in
+            password.updatePassword(name: password.name, path: path, plainText: entry.plainText(replacingPasswordIn: password.plainText))
+            store { _ = try PasswordStore.shared.edit(passwordEntity: existingEntity, password: password) }
+        }
+    }
+
     /// Complete the request with the password or its one-time code, depending on what was asked for.
     /// Returns false if a one-time code was asked for, but the password has none.
     private func complete(with password: Password) -> Bool {

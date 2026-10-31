@@ -56,6 +56,7 @@
 		30697C5021F63D7F0064FCAC /* ExtensionConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697C4F21F63D7F0064FCAC /* ExtensionConstants.swift */; };
 		30697C5321F63E0B0064FCAC /* PasscodeExtensionDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697C5121F63E0B0064FCAC /* PasscodeExtensionDisplay.swift */; };
 		30697C5421F63E0B0064FCAC /* CredentialProviderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697C5221F63E0B0064FCAC /* CredentialProviderViewController.swift */; };
+		B72C22EAF4F8C6C62C763350 /* SavePasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57F798BFFA351C4E3B00FCF /* SavePasswordViewController.swift */; };
 		30697C5F21F674800064FCAC /* String+UtilitiesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697C5E21F674800064FCAC /* String+UtilitiesTest.swift */; };
 		306D970E24091CDD006C0E2E /* SwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306D970D24091CDD006C0E2E /* SwitchTableViewCell.swift */; };
 		306D971224091EE7006C0E2E /* SwitchTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 306D971124091EE7006C0E2E /* SwitchTableViewCell.xib */; };
@@ -209,8 +210,10 @@
 		DC64745D2D29BEA9004B4BBC /* CoreDataTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6474582D29BD43004B4BBC /* CoreDataTestCase.swift */; };
 		DC64745F2D45B240004B4BBC /* GitRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC64745E2D45B23A004B4BBC /* GitRepository.swift */; };
 		C7AED9AF1A2F5D8917B7FAD8 /* GitHostKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3622902266545A98E918A85C /* GitHostKeys.swift */; };
+		9A6C3F8E7E92781A0091A237 /* NewPasswordEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F34ABD7AD1608187674962 /* NewPasswordEntry.swift */; };
 		DC6474612D46A8F8004B4BBC /* GitRepositoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6474602D46A8F2004B4BBC /* GitRepositoryTest.swift */; };
 		16E4753FDDEF7847DF3D35FF /* GitHostKeysTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52E56B7C6EA87CD0F5A8668 /* GitHostKeysTest.swift */; };
+		E0B130505D4C1A578E3EC0B9 /* NewPasswordEntryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B92159F65BDDEA82248EFBA /* NewPasswordEntryTest.swift */; };
 		DC7CBBBD2D0FA3F2003BB4D2 /* YubiKit in Frameworks */ = {isa = PBXBuildFile; productRef = DC7CBBBC2D0FA3F2003BB4D2 /* YubiKit */; };
 		DC7CBBC22D0FA3F2003BB4D3 /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = DC7CBBC12D0FA3F2003BB4D3 /* DequeModule */; };
 		DC7CBBBF2D0FAC92003BB4D2 /* YKFSmartCardInterfaceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC7CBBBE2D0FAC8E003BB4D2 /* YKFSmartCardInterfaceExtension.swift */; };
@@ -388,6 +391,7 @@
 		30697C4F21F63D7F0064FCAC /* ExtensionConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionConstants.swift; sourceTree = "<group>"; };
 		30697C5121F63E0B0064FCAC /* PasscodeExtensionDisplay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasscodeExtensionDisplay.swift; sourceTree = "<group>"; };
 		30697C5221F63E0B0064FCAC /* CredentialProviderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialProviderViewController.swift; sourceTree = "<group>"; };
+		D57F798BFFA351C4E3B00FCF /* SavePasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePasswordViewController.swift; sourceTree = "<group>"; };
 		30697C5E21F674800064FCAC /* String+UtilitiesTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+UtilitiesTest.swift"; sourceTree = "<group>"; };
 		306D970D24091CDD006C0E2E /* SwitchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchTableViewCell.swift; sourceTree = "<group>"; };
 		306D971124091EE7006C0E2E /* SwitchTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SwitchTableViewCell.xib; sourceTree = "<group>"; };
@@ -525,8 +529,10 @@
 		DC6474592D29BD43004B4BBC /* PasswordEntityTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordEntityTest.swift; sourceTree = "<group>"; };
 		DC64745E2D45B23A004B4BBC /* GitRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitRepository.swift; sourceTree = "<group>"; };
 		3622902266545A98E918A85C /* GitHostKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHostKeys.swift; sourceTree = "<group>"; };
+		10F34ABD7AD1608187674962 /* NewPasswordEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPasswordEntry.swift; sourceTree = "<group>"; };
 		DC6474602D46A8F2004B4BBC /* GitRepositoryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitRepositoryTest.swift; sourceTree = "<group>"; };
 		D52E56B7C6EA87CD0F5A8668 /* GitHostKeysTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHostKeysTest.swift; sourceTree = "<group>"; };
+		3B92159F65BDDEA82248EFBA /* NewPasswordEntryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPasswordEntryTest.swift; sourceTree = "<group>"; };
 		DC7CBBBE2D0FAC8E003BB4D2 /* YKFSmartCardInterfaceExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YKFSmartCardInterfaceExtension.swift; sourceTree = "<group>"; };
 		DC8963BF1E38EEB900828B09 /* SSHKeyURLImportTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSHKeyURLImportTableViewController.swift; sourceTree = "<group>"; };
 		DC917BD31E2E8231000FDF54 /* Pass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pass.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -769,6 +775,7 @@
 			children = (
 				DC6474602D46A8F2004B4BBC /* GitRepositoryTest.swift */,
 				D52E56B7C6EA87CD0F5A8668 /* GitHostKeysTest.swift */,
+				3B92159F65BDDEA82248EFBA /* NewPasswordEntryTest.swift */,
 				CE32256A78938A4AB2B563E0 /* AutoFillIdentityTest.swift */,
 				CA660F249D8B1AD49EE2B57B /* PasscodeLockTest.swift */,
 				30695E2424FAEF2600C9D46E /* GitCredentialTest.swift */,
@@ -896,6 +903,7 @@
 			isa = PBXGroup;
 			children = (
 				30697C5221F63E0B0064FCAC /* CredentialProviderViewController.swift */,
+				D57F798BFFA351C4E3B00FCF /* SavePasswordViewController.swift */,
 				9A55C184259E8C5600FA8FD9 /* PasswordsViewController.swift */,
 				30697C5121F63E0B0064FCAC /* PasscodeExtensionDisplay.swift */,
 				30B00F5426D59562004DAC61 /* PasscodeLockViewControllerForExtension.swift */,
@@ -972,6 +980,7 @@
 			children = (
 				DC64745E2D45B23A004B4BBC /* GitRepository.swift */,
 				3622902266545A98E918A85C /* GitHostKeys.swift */,
+				10F34ABD7AD1608187674962 /* NewPasswordEntry.swift */,
 				047D9CF533EE8718938FD767 /* AutoFillIdentity.swift */,
 				30697C4121F63CAB0064FCAC /* GitCredential.swift */,
 				30697C4221F63CAB0064FCAC /* PasscodeLock.swift */,
@@ -1616,6 +1625,7 @@
 				9AFC882E25B53BF5008D6060 /* PasswordDecryptor.swift in Sources */,
 				9A8F9ECC259ECB410027CE15 /* PasswordSelectionDelegate.swift in Sources */,
 				30697C5421F63E0B0064FCAC /* CredentialProviderViewController.swift in Sources */,
+				B72C22EAF4F8C6C62C763350 /* SavePasswordViewController.swift in Sources */,
 				9A55C185259E8C5600FA8FD9 /* PasswordsViewController.swift in Sources */,
 				30B00F5526D59562004DAC61 /* PasscodeLockViewControllerForExtension.swift in Sources */,
 				9A5D06F525A56F0E00FA59D4 /* PasswordTableViewCell.swift in Sources */,
@@ -1663,6 +1673,7 @@
 				30DAFD4A240985A7002456E7 /* Array+Slices.swift in Sources */,
 				DC64745F2D45B240004B4BBC /* GitRepository.swift in Sources */,
 				C7AED9AF1A2F5D8917B7FAD8 /* GitHostKeys.swift in Sources */,
+				9A6C3F8E7E92781A0091A237 /* NewPasswordEntry.swift in Sources */,
 				9A74D2E0277D2F8C00F7BC44 /* UIAlertControllerExtension.swift in Sources */,
 				30697C4721F63CAB0064FCAC /* PasscodeLock.swift in Sources */,
 				A2699ACD2402631400F36323 /* PasswordTableEntry.swift in Sources */,
@@ -1696,6 +1707,7 @@
 				30BAC8CB22E3BB6C00438475 /* DictBasedKeychain.swift in Sources */,
 				DC6474612D46A8F8004B4BBC /* GitRepositoryTest.swift in Sources */,
 				16E4753FDDEF7847DF3D35FF /* GitHostKeysTest.swift in Sources */,
+				E0B130505D4C1A578E3EC0B9 /* NewPasswordEntryTest.swift in Sources */,
 				A2699ACF24027D9500F36323 /* PasswordTableEntryTest.swift in Sources */,
 				E8CAB27A4C2E66B9692656F9 /* AutoFillIdentityTest.swift in Sources */,
 				B1BB1AE7B565E314C5F57945 /* PasscodeLockTest.swift in Sources */,

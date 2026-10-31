@@ -70,6 +70,38 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
         prepareInterfaceToProvideCredential(for: identity.serviceIdentifier, recordIdentifier: identity.recordIdentifier, type: type)
     }
 
+    @available(iOS 26.2, *)
+    override func performWithoutUserInteractionIfPossible(savePasswordRequest _: ASSavePasswordRequest) {
+        // Every saved password becomes a commit in the store, so users always confirm it and choose its name.
+        cancelRequest(with: .userInteractionRequired)
+    }
+
+    @available(iOS 26.2, *)
+    override func prepareInterface(for savePasswordRequest: ASSavePasswordRequest) {
+        passcodelock.presentPasscodeLockIfNeeded(self) {
+            self.view.isHidden = true
+        } after: { [unowned self] in
+            view.isHidden = false
+            showSavePassword(for: savePasswordRequest)
+        }
+    }
+
+    @available(iOS 26.2, *)
+    private func showSavePassword(for request: ASSavePasswordRequest) {
+        let serviceIdentifier = request.serviceIdentifier
+        let password = request.credential.password
+        let entry = NewPasswordEntry(host: serviceIdentifier.host, username: request.credential.user, password: password)
+        let savePasswordViewController = SavePasswordViewController(entry: entry) { [unowned self] name, username in
+            let entry = NewPasswordEntry(host: serviceIdentifier.host, username: username, password: password)
+            credentialProvider.save(entry, as: name, for: serviceIdentifier) { [unowned self] in
+                extensionContext.completeSavePasswordRequest(completionHandler: nil)
+            }
+        } cancel: { [unowned self] in
+            cancelRequest(with: .userCanceled)
+        }
+        (children.first as? UINavigationController)?.setViewControllers([savePasswordViewController], animated: false)
+    }
+
     private func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier], type: CredentialProvider.CredentialType) {
         passcodelock.presentPasscodeLockIfNeeded(self) {
             self.view.isHidden = true

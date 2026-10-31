@@ -295,6 +295,10 @@
 "FillInName."                       = "Bitte gib den Namen ein.";
 "RemovePrefix."                     = "Bitte entferne den Prefix \"/\" vom Namen des Passwortes.";
 "PasswordNameInvalid."              = "Der Name des Passwortes ist ungültig.";
+"SavePassword"                      = "Passwort sichern";
+"Username"                          = "Benutzername";
+"SavePasswordCreatesNew."           = "Das Passwort wird mit deinem PGP-Schlüssel verschlüsselt und im Repository committet. Es wird bei der nächsten Synchronisation übertragen.";
+"SavePasswordReplacesExisting."     = "Ein Passwort mit diesem Namen existiert bereits. Beim Sichern wird sein Passwort ersetzt, die übrigen Zeilen bleiben erhalten.";
 "CannotParseFilename."              = "Der Name der Datei kann nicht gelesen werden. Bitte vereinfache den Namen des Passwortes.";
 "WannaUseIt?"                       = "Möchtest du es als Passwort verwenden?";
 "SeemsLikeYouHaveCopiedSomething."  = "Scheint so, als hast du etwas kopiert.";

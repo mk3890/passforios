@@ -296,6 +296,10 @@
 "FillInName."                       = "Please fill in the name.";
 "RemovePrefix."                     = "Please remove the prefix \"/\" from your password name.";
 "PasswordNameInvalid."              = "Password name is invalid.";
+"SavePassword"                      = "Save Password";
+"Username"                          = "Username";
+"SavePasswordCreatesNew."           = "The password is encrypted with your PGP key and committed to the repository. It is pushed with the next sync.";
+"SavePasswordReplacesExisting."     = "A password with this name exists. Saving replaces its password and keeps its other lines.";
 "CannotParseFilename."              = "Cannot parse the filename. Please check and simplify the password name.";
 "WannaUseIt?"                       = "Wanna use it?";
 "SeemsLikeYouHaveCopiedSomething."  = "It seems like you have copied something.";

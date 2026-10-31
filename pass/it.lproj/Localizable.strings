@@ -291,6 +291,10 @@
 "FillInName."                       = "Inserire il nome.";
 "RemovePrefix."                     = "La password non può cominciare con \"/\".";
 "PasswordNameInvalid."              = "Il nome della password non è valido.";
+"SavePassword"                      = "Salva password";
+"Username"                          = "Nome utente";
+"SavePasswordCreatesNew."           = "La password viene cifrata con la tua chiave PGP e salvata con un commit nel repository. Verrà inviata alla prossima sincronizzazione.";
+"SavePasswordReplacesExisting."     = "Esiste già una password con questo nome. Salvando, la sua password viene sostituita e le altre righe vengono mantenute.";
 "CannotParseFilename."              = "Impossibile validare il nome del file. Controllare e semplificare il nome della password.";
 "WannaUseIt?"                       = "Usarlo?";
 "SeemsLikeYouHaveCopiedSomething."  = "Sembra che tu abbia copiato qualcosa.";

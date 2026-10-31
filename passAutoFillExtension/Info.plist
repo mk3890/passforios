@@ -30,6 +30,8 @@
 				<true/>
 				<key>ProvidesOneTimeCodes</key>
 				<true/>
+				<key>SupportsSavePasswordCredentials</key>
+				<true/>
 			</dict>
 		</dict>
 		<key>NSExtensionMainStoryboard</key>
