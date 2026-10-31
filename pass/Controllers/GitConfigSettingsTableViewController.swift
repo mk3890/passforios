@@ -30,7 +30,7 @@ class GitConfigSettingsTableViewController: UITableViewController {
         if identifier == "saveGitConfigSettingSegue" {
             let name = nameTextField.text!.isEmpty ? Globals.gitSignatureDefaultName : nameTextField.text!
             let email = emailTextField.text!.isEmpty ? Globals.gitSignatureDefaultEmail : nameTextField.text!
-            guard GTSignature(name: name, email: email, time: nil) != nil else {
+            guard GitSignature.isValid(name: name, email: email) else {
                 Utils.alert(title: "Error".localize(), message: "InvalidNameOrEmail".localize(), controller: self, completion: nil)
                 return false
             }

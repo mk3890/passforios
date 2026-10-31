@@ -49,6 +49,7 @@ For more, please read the [wiki page](https://github.com/mssun/passforios/wiki).
 
 1. Install Go: `brew install go`.
 1. Run `./scripts/gopenpgp_build.sh` to build GopenPGP.
+1. Run `./scripts/libgit2_build.sh` to build libgit2 with libssh2 and OpenSSL (requires CMake, e.g., `brew install cmake`).
 1. Open the `pass.xcodeproj` file in Xcode.
 1. Build & Run.
 

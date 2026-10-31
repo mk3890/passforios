@@ -39,6 +39,7 @@ public final class Globals {
 
     public static let gitPassword = "gitPassword"
     public static let gitSSHPrivateKeyPassphrase = "gitSSHPrivateKeyPassphrase"
+    public static let gitSSHHostKey = "gitSSHHostKey"
     public static let pgpKeyPassphrase = "pgpKeyPassphrase"
 
     public static let gitSignatureDefaultName = "Pass for iOS"

@@ -49,6 +49,9 @@ Podfile.lock
 # Go Mobile Build results and dependency sources
 go/
 
+# libgit2 build results and dependency sources
+libgit2/
+
 # fastlane
 #
 # It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the

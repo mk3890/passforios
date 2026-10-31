@@ -27,14 +27,24 @@ class OpenSourceComponentsTableViewController: BasicStaticTableViewController {
             "https://github.com/kishikawakatsumi/KeychainAccess/blob/master/LICENSE",
         ],
         [
-            "ObjectiveGit",
-            "https://github.com/libgit2/objective-git",
-            "https://github.com/libgit2/objective-git/blob/master/LICENSE",
+            "libgit2",
+            "https://libgit2.org/",
+            "https://github.com/libgit2/libgit2/blob/main/COPYING",
+        ],
+        [
+            "libssh2",
+            "https://libssh2.org/",
+            "https://github.com/libssh2/libssh2/blob/master/COPYING",
         ],
         [
             "ObjectivePGP",
             "https://github.com/krzyzanowskim/ObjectivePGP",
             "https://github.com/krzyzanowskim/ObjectivePGP/blob/master/LICENSE.txt",
+        ],
+        [
+            "OpenSSL",
+            "https://www.openssl.org/",
+            "https://github.com/openssl/openssl/blob/master/LICENSE.txt",
         ],
         [
             "OneTimePassword",

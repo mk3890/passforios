@@ -6,8 +6,36 @@
 //  Copyright © 2017 Bob Sun. All rights reserved.
 //
 
-import ObjectiveGit
 import SVProgressHUD
+
+/// The credential handed to libgit2 when the remote asks for one.
+public enum GitCredentialValue: Equatable {
+    /// Only the user name, which SSH asks for first if the URL lacks one.
+    case username(String)
+    case password(userName: String, password: String)
+    case sshKey(userName: String, privateKey: String, passphrase: String)
+}
+
+/// Decides whether to trust an SSH host key that is unknown or differs from the saved one, e.g., by asking the user.
+/// Gets the host, the SHA-256 fingerprint of the presented key and the fingerprint saved before, if any.
+public typealias GitHostKeyApprover = (_ host: String, _ fingerprint: String, _ savedFingerprint: String?) -> Bool
+
+/// How to authenticate to the remote and which SSH host keys to trust when connecting to it.
+public struct GitRemoteOptions {
+    let credential: (_ usernameOnly: Bool) -> GitCredentialValue?
+    let hostKeys: GitHostKeys
+    let approveHostKey: GitHostKeyApprover
+
+    public init(
+        credential: @escaping (_ usernameOnly: Bool) -> GitCredentialValue? = { _ in nil },
+        hostKeys: GitHostKeys = GitHostKeys(),
+        approveHostKey: @escaping GitHostKeyApprover = { _, _, _ in false }
+    ) {
+        self.credential = credential
+        self.hostKeys = hostKeys
+        self.approveHostKey = approveHostKey
+    }
+}
 
 public struct GitCredential {
     public typealias PasswordProvider = (String, String?) -> String?
@@ -46,12 +74,19 @@ public struct GitCredential {
             }
         }
 
-        func createGTCredential(password: String) throws -> GTCredential {
+        var userName: String {
+            switch self {
+            case let .http(userName), let .ssh(userName, _):
+                return userName
+            }
+        }
+
+        func credential(password: String) -> GitCredentialValue {
             switch self {
             case let .http(userName):
-                return try GTCredential(userName: userName, password: password)
+                return .password(userName: userName, password: password)
             case let .ssh(userName, privateKey):
-                return try GTCredential(userName: userName, publicKeyString: nil, privateKeyString: privateKey, passphrase: password)
+                return .sshKey(userName: userName, privateKey: privateKey, passphrase: password)
             }
         }
     }
@@ -66,17 +101,16 @@ public struct GitCredential {
         }
     }
 
-    public func getCredentialOptions(passwordProvider: @escaping PasswordProvider = { _, _ in nil }) -> [String: Any] {
-        let credentialProvider = createCredentialProvider(passwordProvider)
-        return [
-            GTRepositoryCloneOptionsCredentialProvider: credentialProvider,
-            GTRepositoryRemoteOptionsCredentialProvider: credentialProvider,
-        ]
-    }
-
-    private func createCredentialProvider(_ passwordProvider: @escaping PasswordProvider) -> GTCredentialProvider {
+    /// Options for one remote operation. Unknown SSH host keys are rejected unless the approver accepts them.
+    public func getCredentialOptions(
+        passwordProvider: @escaping PasswordProvider = { _, _ in nil },
+        hostKeyApprover: @escaping GitHostKeyApprover = { _, _, _ in false }
+    ) -> GitRemoteOptions {
         var attempts = 1
-        return GTCredentialProvider { _, _, _ -> GTCredential? in
+        let credential = { (usernameOnly: Bool) -> GitCredentialValue? in
+            if usernameOnly {
+                return .username(credentialType.userName)
+            }
             if attempts > credentialType.allowedAttempts {
                 return nil
             }
@@ -84,8 +118,9 @@ public struct GitCredential {
                 return nil
             }
             attempts += 1
-            return try? credentialType.createGTCredential(password: password)
+            return credentialType.credential(password: password)
         }
+        return GitRemoteOptions(credential: credential, hostKeys: GitHostKeys(keyStore: keyStore), approveHostKey: hostKeyApprover)
     }
 
     public func delete() {

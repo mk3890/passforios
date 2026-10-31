@@ -6,12 +6,11 @@
 //  Copyright © 2017 Bob Sun. All rights reserved.
 //
 
-import ObjectiveGit
 import passKit
 import UIKit
 
 class CommitLogsTableViewController: UITableViewController {
-    var commits: [GTCommit] = []
+    var commits: [GitCommit] = []
     let passwordStore = PasswordStore.shared
 
     override func viewDidLoad() {
@@ -48,7 +47,7 @@ class CommitLogsTableViewController: UITableViewController {
         tableView.reloadData()
     }
 
-    private func getCommitLogs() -> [GTCommit] {
+    private func getCommitLogs() -> [GitCommit] {
         do {
             return try passwordStore.getRecentCommits(count: 20)
         } catch {

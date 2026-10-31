@@ -9,7 +9,6 @@
 import CoreData
 import Foundation
 import KeychainAccess
-import ObjectiveGit
 import SwiftyUserDefaults
 import UIKit
 
@@ -26,10 +25,10 @@ public class PasswordStore {
 
     public var gitRepository: GitRepository?
 
-    public var gitSignatureForNow: GTSignature? {
+    public var gitSignatureForNow: GitSignature {
         let gitSignatureName = Defaults.gitSignatureName ?? Globals.gitSignatureDefaultName
         let gitSignatureEmail = Defaults.gitSignatureEmail ?? Globals.gitSignatureDefaultEmail
-        return GTSignature(name: gitSignatureName, email: gitSignatureEmail, time: Date())
+        return GitSignature(name: gitSignatureName, email: gitSignatureEmail)
     }
 
     public var gitPassword: String? {
@@ -116,8 +115,8 @@ public class PasswordStore {
     public func cloneRepository(
         remoteRepoURL: URL,
         branchName: String,
-        options: CloneOptions = [:],
-        transferProgressBlock: @escaping TransferProgressHandler = { _, _ in },
+        options: GitRemoteOptions = GitRemoteOptions(),
+        transferProgressBlock: @escaping TransferProgressHandler = { _ in },
         checkoutProgressBlock: @escaping CheckoutProgressHandler = { _, _, _ in }
     ) throws {
         try? fileManager.removeItem(at: storeURL)
@@ -142,13 +141,13 @@ public class PasswordStore {
     }
 
     public func pullRepository(
-        options: PullOptions,
-        progressBlock: @escaping TransferProgressHandler = { _, _ in }
+        options: GitRemoteOptions,
+        progressBlock: @escaping TransferProgressHandler = { _ in }
     ) throws {
         guard let gitRepository else {
             throw AppError.repositoryNotSet
         }
-        try gitRepository.pull(options: options, transferProgressBlock: progressBlock)
+        try gitRepository.pull(options: options, signature: gitSignatureForNow, transferProgressBlock: progressBlock)
         Defaults.lastSyncedTime = Date()
         setAllSynced()
         DispatchQueue.main.async {
@@ -163,7 +162,7 @@ public class PasswordStore {
         saveUpdatedContext()
     }
 
-    public func getRecentCommits(count: Int) throws -> [GTCommit] {
+    public func getRecentCommits(count: Int) throws -> [GitCommit] {
         guard let gitRepository else {
             throw AppError.repositoryNotSet
         }
@@ -218,8 +217,8 @@ public class PasswordStore {
     }
 
     public func pushRepository(
-        options: PushOptions,
-        transferProgressBlock: @escaping PushProgressHandler = { _, _, _, _ in }
+        options: GitRemoteOptions,
+        transferProgressBlock: @escaping PushProgressHandler = { _, _ in }
     ) throws {
         guard let gitRepository else {
             throw AppError.repositoryNotSet
@@ -385,7 +384,7 @@ public class PasswordStore {
         return localCommitsCount
     }
 
-    private func getLocalCommits() throws -> [GTCommit] {
+    private func getLocalCommits() throws -> [GitCommit] {
         guard let gitRepository else {
             throw AppError.repositoryNotSet
         }
@@ -461,8 +460,8 @@ extension PasswordStore {
     }
 
     @discardableResult
-    private func gitCommit(message: String) throws -> GTCommit {
-        guard let gitRepository, let gitSignatureForNow else {
+    private func gitCommit(message: String) throws -> GitCommit {
+        guard let gitRepository else {
             throw AppError.repositoryNotSet
         }
         return try gitRepository.commit(signature: gitSignatureForNow, message: message)

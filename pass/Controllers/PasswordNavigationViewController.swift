@@ -509,15 +509,15 @@ extension PasswordNavigationViewController: PasswordAlertPresenter {
         }
         DispatchQueue.global(qos: .userInitiated).async { [unowned self] in
             do {
-                let pullOptions = gitCredential.getCredentialOptions(passwordProvider: present)
-                try PasswordStore.shared.pullRepository(options: pullOptions) { git_transfer_progress, _ in
+                let pullOptions = gitCredential.getCredentialOptions(passwordProvider: present, hostKeyApprover: approveUnknownHostKey)
+                try PasswordStore.shared.pullRepository(options: pullOptions) { transferProgress in
                     DispatchQueue.main.async {
-                        SVProgressHUD.showProgress(Float(git_transfer_progress.pointee.received_objects) / Float(git_transfer_progress.pointee.total_objects), status: "PullingFromRemoteRepository".localize())
+                        SVProgressHUD.showProgress(Float(transferProgress.receivedObjects) / Float(transferProgress.totalObjects), status: "PullingFromRemoteRepository".localize())
                     }
                 }
                 if PasswordStore.shared.numberOfLocalCommits > 0 {
-                    let pushOptions = gitCredential.getCredentialOptions(passwordProvider: present)
-                    try PasswordStore.shared.pushRepository(options: pushOptions) { current, total, _, _ in
+                    let pushOptions = gitCredential.getCredentialOptions(passwordProvider: present, hostKeyApprover: approveUnknownHostKey)
+                    try PasswordStore.shared.pushRepository(options: pushOptions) { current, total in
                         DispatchQueue.main.async {
                             SVProgressHUD.showProgress(Float(current) / Float(total), status: "PushingToRemoteRepository".localize())
                         }
@@ -529,7 +529,13 @@ extension PasswordNavigationViewController: PasswordAlertPresenter {
                     SVProgressHUD.dismiss(withDelay: 1)
                 }
             } catch let error as NSError {
-                gitCredential.delete()
+                // Keep the credential if the failure has nothing to do with it.
+                switch error as Error {
+                case AppError.gitHostKeyNotTrusted, AppError.gitHostKeyChanged, AppError.gitMergeConflict:
+                    break
+                default:
+                    gitCredential.delete()
+                }
                 DispatchQueue.main.async {
                     SVProgressHUD.dismiss()
                     var message = error.localizedDescription
@@ -538,10 +544,6 @@ extension PasswordNavigationViewController: PasswordAlertPresenter {
                         if underlyingError.localizedDescription.contains("WrongPassphrase".localize()) {
                             message = message | "RecoverySuggestion.".localize()
                         }
-                    }
-                    if let mergeConflictFiles = error.userInfo[GTPullMergeConflictedFiles] as? NSArray {
-                        let mergeConflictFilesString = mergeConflictFiles.componentsJoined(by: ", ")
-                        message = message | "MergeConflictError".localize(mergeConflictFilesString)
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(800)) {
                         Utils.alert(title: "Error".localize(), message: message, controller: self, completion: nil)

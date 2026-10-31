@@ -8,7 +8,6 @@
 
 import XCTest
 
-import ObjectiveGit
 import SwiftyUserDefaults
 @testable import passKit
 
@@ -45,19 +44,7 @@ final class GitCredentialTest: XCTestCase {
         XCTAssertFalse(keyStore.contains(key: Globals.gitSSHPrivateKeyPassphrase))
     }
 
-    func testOptions() {
-        let password = GitCredential.from(authenticationMethod: .password, userName: "user", keyStore: keyStore)
-
-        let options = password.getCredentialOptions()
-        XCTAssertEqual(options.count, 2)
-
-        let cloneCredentialProvider = options[GTRepositoryCloneOptionsCredentialProvider] as! GTCredentialProvider
-        let remoteCredentialProvider = options[GTRepositoryRemoteOptionsCredentialProvider] as! GTCredentialProvider
-        XCTAssertNotNil(cloneCredentialProvider)
-        XCTAssertEqual(cloneCredentialProvider, remoteCredentialProvider)
-    }
-
-    func testPasswordCredentialProvider() {
+    func testPasswordCredential() {
         let password = GitCredential.from(authenticationMethod: .password, userName: "user", keyStore: keyStore)
         let expectation = expectation(description: "Password is requested.")
         expectation.assertForOverFulfill = true
@@ -66,43 +53,59 @@ final class GitCredentialTest: XCTestCase {
             expectation.fulfill()
             return "otherPassword"
         }
-        let credentialProvider = options[GTRepositoryCloneOptionsCredentialProvider] as! GTCredentialProvider
 
-        (1 ..< 5).forEach { _ in
-            XCTAssertNotNil(credentialProvider.credential(for: .userPassPlaintext, url: nil, userName: nil))
+        // The saved password is tried first.
+        XCTAssertEqual(options.credential(false), .password(userName: "user", password: "password"))
+        (2 ... 4).forEach { _ in
+            XCTAssertEqual(options.credential(false), .password(userName: "user", password: "otherPassword"))
         }
-        XCTAssertNil(credentialProvider.credential(for: .userPassPlaintext, url: nil, userName: nil))
+        XCTAssertNil(options.credential(false))
         wait(for: [expectation], timeout: 0)
     }
 
-    func testSSHKeyCredentialProvider() throws {
-        throw XCTSkip("Skipped. This test failed in CI environment. Reason still unknown.")
-        let credentialProvider = getCredentialProvider(authenticationMethod: .key)
+    func testUsernameDoesNotCountAsAttempt() {
+        let key = GitCredential.from(authenticationMethod: .key, userName: "user", keyStore: keyStore)
+        let options = key.getCredentialOptions()
 
-        XCTAssertNotNil(credentialProvider.credential(for: .sshCustom, url: nil, userName: nil))
-        XCTAssertNil(credentialProvider.credential(for: .sshCustom, url: nil, userName: nil))
+        XCTAssertEqual(options.credential(true), .username("user"))
+        XCTAssertEqual(options.credential(true), .username("user"))
+        XCTAssertNotNil(options.credential(false))
+    }
+
+    func testSSHKeyCredential() {
+        keyStore.add(string: "privateKey", for: SSHKey.PRIVATE.getKeychainKey())
+        let options = GitCredential.from(authenticationMethod: .key, userName: "user", keyStore: keyStore).getCredentialOptions()
+
+        XCTAssertEqual(options.credential(false), .sshKey(userName: "user", privateKey: "privateKey", passphrase: "passphrase"))
+        XCTAssertNil(options.credential(false))
     }
 
     func testCannotGetPassword() {
-        let credentialProvider = getCredentialProvider(authenticationMethod: .password)
+        let options = getCredentialOptions(authenticationMethod: .password)
 
-        XCTAssertNotNil(credentialProvider.credential(for: .userPassPlaintext, url: nil, userName: nil))
-        XCTAssertNil(credentialProvider.credential(for: .userPassPlaintext, url: nil, userName: nil))
+        XCTAssertNotNil(options.credential(false))
+        XCTAssertNil(options.credential(false))
     }
 
     func testSaveToKeyStore() {
-        let credentialProvider = getCredentialProvider(authenticationMethod: .key, password: "otherPassword")
+        let options = getCredentialOptions(authenticationMethod: .key, password: "otherPassword")
 
         passKit.Defaults.isRememberGitCredentialPassphraseOn = true
         keyStore.removeAllContent()
-        credentialProvider.credential(for: .sshCustom, url: nil, userName: nil)
+        _ = options.credential(false)
 
         XCTAssertEqual(keyStore.get(for: Globals.gitSSHPrivateKeyPassphrase), "otherPassword")
     }
 
-    private func getCredentialProvider(authenticationMethod: GitAuthenticationMethod, password: String? = nil) -> GTCredentialProvider {
+    func testHostKeyApprover() {
+        let credential = GitCredential.from(authenticationMethod: .password, userName: "user", keyStore: keyStore)
+
+        XCTAssertFalse(credential.getCredentialOptions().approveHostKey("host", "SHA256:new", nil))
+        XCTAssertTrue(credential.getCredentialOptions(hostKeyApprover: { _, _, _ in true }).approveHostKey("host", "SHA256:new", nil))
+    }
+
+    private func getCredentialOptions(authenticationMethod: GitAuthenticationMethod, password: String? = nil) -> GitRemoteOptions {
         let credential = GitCredential.from(authenticationMethod: authenticationMethod, userName: "user", keyStore: keyStore)
-        let options = credential.getCredentialOptions { _, _ in password }
-        return options[GTRepositoryCloneOptionsCredentialProvider] as! GTCredentialProvider
+        return credential.getCredentialOptions { _, _ in password }
     }
 }

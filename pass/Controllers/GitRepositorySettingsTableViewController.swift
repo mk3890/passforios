@@ -175,18 +175,18 @@ class GitRepositorySettingsTableViewController: UITableViewController, PasswordA
         // swiftlint:disable:next closure_body_length
         DispatchQueue.global(qos: .userInitiated).async {
             do {
-                let transferProgressBlock: (UnsafePointer<git_transfer_progress>, UnsafeMutablePointer<ObjCBool>) -> Void = { git_transfer_progress, _ in
-                    let gitTransferProgress = git_transfer_progress.pointee
-                    let progress = Float(gitTransferProgress.received_objects) / Float(gitTransferProgress.total_objects)
+                let transferProgressBlock: TransferProgressHandler = { transferProgress in
+                    let progress = Float(transferProgress.receivedObjects) / Float(transferProgress.totalObjects)
                     SVProgressHUD.showProgress(progress, status: "Cloning Remote Repository")
                 }
 
-                let checkoutProgressBlock: (String, UInt, UInt) -> Void = { _, completedSteps, totalSteps in
+                let checkoutProgressBlock: CheckoutProgressHandler = { _, completedSteps, totalSteps in
                     let progress = Float(completedSteps) / Float(totalSteps)
                     SVProgressHUD.showProgress(progress, status: "CheckingOutBranch".localize(self.gitBranchName))
                 }
 
-                let options = self.gitCredential.getCredentialOptions(passwordProvider: self.present)
+                // Cloning is where users review a changed SSH host key, e.g., after the server was reinstalled.
+                let options = self.gitCredential.getCredentialOptions(passwordProvider: self.present, hostKeyApprover: self.approveHostKey)
 
                 try self.passwordStore.cloneRepository(
                     remoteRepoURL: self.gitURL,

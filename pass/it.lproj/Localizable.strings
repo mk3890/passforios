@@ -77,6 +77,15 @@
 "GitResetError."                        = "Impossibile identificare l'ultimo commit sincronizzato.";
 "GitCreateSignatureError."              = "Impossibile creare un autore/committer valido.";
 "GitPushNotSuccessfulError."            = "Impossibile eseguire il push delle modifiche locali. Assicurarsi che non ci siano modifiche senza commit nel repository remoto.";
+"GitAuthenticationError."               = "L'autenticazione con il server git non è riuscita o è stata annullata.";
+"GitHostKeyNotTrustedError."            = "La chiave host SSH di %@ non è attendibile.";
+"GitHostKeyChangedError."               = "La chiave host SSH di %@ è cambiata. Qualcuno potrebbe intercettare la connessione. Se la chiave del server è stata cambiata di proposito, clona di nuovo il repository nelle impostazioni git per verificare la nuova chiave.";
+"GitMergeConflictError."                = "Le modifiche locali sono in conflitto con quelle del repository remoto in: %@";
+"UnknownHostKey"                        = "Server sconosciuto";
+"UnknownHostKeyMessage."                = "Non è possibile verificare l'autenticità di %@.\n\nImpronta SHA-256 della sua chiave SSH:\n%@\n\nFidati solo se l'impronta corrisponde a quella pubblicata dal tuo provider git.";
+"HostKeyChanged"                        = "Chiave del server cambiata";
+"HostKeyChangedMessage."                = "La chiave SSH di %@ è diversa da quella considerata attendibile in precedenza. Qualcuno potrebbe intercettare la connessione.\n\nAttendibile in precedenza:\n%@\n\nPresentata ora:\n%@\n\nFidati della nuova chiave solo se sai che la chiave del server è stata cambiata.";
+"TrustHostKey"                          = "Fidati";
 "WrongPasswordFilenameError."           = "Impossibile scrivere il file della password.";
 "DecryptionError."                      = "Impossibile decriptare la password.";
 "EncodingError."                        = "La chiave non ha una codifica ASCII.";

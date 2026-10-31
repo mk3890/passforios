@@ -79,6 +79,15 @@
 "GitResetError."                        = "Cannot identify the latest synced commit.";
 "GitCreateSignatureError."              = "Cannot create a valid author/committer signature.";
 "GitPushNotSuccessfulError."            = "Pushing local changes was not successful. Make sure there are no uncommitted changes on the remote repository.";
+"GitAuthenticationError."               = "Authentication with the git server failed or was cancelled.";
+"GitHostKeyNotTrustedError."            = "The SSH host key of %@ is not trusted.";
+"GitHostKeyChangedError."               = "The SSH host key of %@ has changed. Someone may be intercepting the connection. If the server's key was changed on purpose, clone the repository again in the git settings to review the new key.";
+"GitMergeConflictError."                = "Local changes conflict with changes in the remote repository in: %@";
+"UnknownHostKey"                        = "Unknown Server";
+"UnknownHostKeyMessage."                = "The authenticity of %@ cannot be established.\n\nSHA-256 fingerprint of its SSH key:\n%@\n\nOnly trust it if the fingerprint matches the one published by your git host.";
+"HostKeyChanged"                        = "Server Key Changed";
+"HostKeyChangedMessage."                = "The SSH key of %@ differs from the one trusted before. Someone may be intercepting the connection.\n\nTrusted before:\n%@\n\nPresented now:\n%@\n\nOnly trust the new key if you know the server's key was changed.";
+"TrustHostKey"                          = "Trust";
 "WrongPasswordFilenameError."           = "Cannot write to the password file.";
 "DecryptionError."                      = "Cannot decrypt password.";
 "EncodingError."                        = "Key is not ASCII encoded.";

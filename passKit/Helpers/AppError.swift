@@ -20,6 +20,10 @@ public enum AppError: Error, Equatable {
     case gitCommit
     case gitCreateSignature
     case gitPushNotSuccessful
+    case gitAuthentication
+    case gitHostKeyNotTrusted(host: String)
+    case gitHostKeyChanged(host: String)
+    case gitMergeConflict(files: [String])
     case pgpPublicKeyNotFound(keyID: String)
     case pgpPrivateKeyNotFound(keyID: String)
     case yubiKey(YubiKeyError)
@@ -57,6 +61,10 @@ extension AppError: LocalizedError {
         switch self {
         case let .readingFile(name), let .repositoryBranchNotFound(name), let .repositoryRemoteBranchNotFound(name):
             return localizationKey.localize(name)
+        case let .gitHostKeyNotTrusted(host), let .gitHostKeyChanged(host):
+            return localizationKey.localize(host)
+        case let .gitMergeConflict(files):
+            return localizationKey.localize(files.joined(separator: ", "))
         case let .pgpPrivateKeyNotFound(keyID), let .pgpPublicKeyNotFound(keyID):
             return localizationKey.localize(keyID)
         case let .yubiKey(error):

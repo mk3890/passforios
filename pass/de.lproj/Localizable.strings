@@ -78,6 +78,15 @@
 "GitResetError."                        = "Der zuletzt synchronisierte Commit kann nicht identifiziert werden.";
 "GitCreateSignatureError."              = "Es konnte keine valide Signatur für den Author/Committer angelegt werden.";
 "GitPushNotSuccessfulError."            = "Die Übertragung der lokalen Änderungen war nicht erfolgreich. Stelle bitte sicher, dass auf dem Remote-Repository alle Änderungen commitet sind.";
+"GitAuthenticationError."               = "Die Anmeldung beim Git-Server ist fehlgeschlagen oder wurde abgebrochen.";
+"GitHostKeyNotTrustedError."            = "Dem SSH-Hostschlüssel von %@ wird nicht vertraut.";
+"GitHostKeyChangedError."               = "Der SSH-Hostschlüssel von %@ hat sich geändert. Möglicherweise wird die Verbindung abgefangen. Falls der Schlüssel des Servers absichtlich geändert wurde, klone das Repository in den Git-Einstellungen erneut, um den neuen Schlüssel zu prüfen.";
+"GitMergeConflictError."                = "Lokale Änderungen stehen im Konflikt mit Änderungen im entfernten Repository in: %@";
+"UnknownHostKey"                        = "Unbekannter Server";
+"UnknownHostKeyMessage."                = "Die Echtheit von %@ kann nicht bestätigt werden.\n\nSHA-256-Fingerabdruck seines SSH-Schlüssels:\n%@\n\nVertraue ihm nur, wenn der Fingerabdruck mit dem von deinem Git-Anbieter veröffentlichten übereinstimmt.";
+"HostKeyChanged"                        = "Serverschlüssel geändert";
+"HostKeyChangedMessage."                = "Der SSH-Schlüssel von %@ unterscheidet sich vom bisher vertrauten. Möglicherweise wird die Verbindung abgefangen.\n\nBisher vertraut:\n%@\n\nJetzt vorgelegt:\n%@\n\nVertraue dem neuen Schlüssel nur, wenn du weißt, dass der Schlüssel des Servers geändert wurde.";
+"TrustHostKey"                          = "Vertrauen";
 "WrongPasswordFilenameError."           = "Schreiben der Passwort-Datei nicht möglich .";
 "DecryptionError."                      = "Passwort kann nicht entschlüsselt werden.";
 "EncodingError."                        = "Schlüssel ist nicht in ASCII kodiert.";
